@@ -1,0 +1,17 @@
+{
+  "user": "ubuntu",
+  "install": "yarn install",
+  "start": "yarn build && yarn start",
+  "terminals": [
+    {
+      "name": "dev-server",
+      "command": "yarn dev",
+      "description": "Starts the Next.js development server on port 3000"
+    },
+    {
+      "name": "lint-check",
+      "command": "yarn lint",
+      "description": "Runs the ESLint linter"
+    }
+  ]
+}
