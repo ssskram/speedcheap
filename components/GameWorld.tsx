@@ -59,10 +59,16 @@ export default function GameWorld() {
 
   // Function to get quote based on position in the world
   const getQuoteForPosition = (worldPosition: number): string => {
-    // Calculate which billboard this should be based on game progress
-    const billboardIndex = Math.floor((position - worldPosition) / 200);
-    const adjustedIndex = Math.abs(billboardIndex) % gameQuotes.current!.length;
+    // Calculate which quote this should be based on game progress
+    const quoteIndex = Math.floor((position - worldPosition) / 200);
+    const adjustedIndex = Math.abs(quoteIndex) % gameQuotes.current!.length;
     return gameQuotes.current![adjustedIndex];
+  };
+  
+  // Function to get random natural object type
+  const getNaturalObject = (index: number) => {
+    const objects = ['rock', 'tree', 'cactus', 'boulder', 'shrub', 'deadtree', 'mountain', 'mesa'];
+    return objects[index % objects.length];
   };
 
   useFrame((state, delta) => {
@@ -145,77 +151,172 @@ export default function GameWorld() {
     return road;
   };
 
-  // Generate billboards with position-based quotes
-  const generateBillboards = () => {
-    const billboards = [];
-
-    // Create billboards at regular intervals - spread them out like before
+    // Generate natural objects with position-based quotes
+  const generateNaturalObjects = () => {
+    const objects = [];
+    
+    // Create natural objects at regular intervals - spread them out like before
     for (let i = 0; i < 20; i++) {
       const zPosition = i * -200 - 100; // Much wider spacing for better gameplay
       const side = i % 2 === 0 ? 1 : -1;
       const quote = getQuoteForPosition(zPosition);
-
-      billboards.push(
-        <group
-          key={`billboard-${i}`}
-          position={[side * 12, 3, zPosition]}
-          userData={{ isBillboard: true, originalPosition: zPosition }}
+      const objectType = getNaturalObject(i);
+      
+      // Position objects closer to the road for easier clicking
+      const xPosition = side * 8; // Closer than billboards were
+      
+      objects.push(
+        <group 
+          key={`nature-${i}`} 
+          position={[xPosition, 0, zPosition]}
+          userData={{ isBillboard: true, originalPosition: zPosition }} // Keep same userData for compatibility
+          onClick={(e) => {
+            e.stopPropagation();
+            const { isReading, isGameActive, isGameComplete, startReading } =
+              useGameStore.getState();
+            if (!isReading && isGameActive && !isGameComplete) {
+              startReading(quote, zPosition);
+            }
+          }}
         >
-          {/* Billboard structure */}
-          <Box args={[0.5, 6, 0.5]} position={[-3, 0, 0]}>
-            <meshLambertMaterial color="#8B4513" />
-          </Box>
-          <Box args={[0.5, 6, 0.5]} position={[3, 0, 0]}>
-            <meshLambertMaterial color="#8B4513" />
-          </Box>
-
-          {/* Billboard background - clickable and larger */}
-          <Plane
-            args={[6, 4]}
-            position={[0, 1, 0]}
-            onClick={(e) => {
-              e.stopPropagation();
-              const { isReading, isGameActive, isGameComplete, startReading } =
-                useGameStore.getState();
-              if (!isReading && isGameActive && !isGameComplete) {
-                startReading(quote, zPosition); // Pass original z-position for tracking
-              }
-            }}
-          >
-            <meshLambertMaterial color="#F5F5DC" />
-          </Plane>
-
-          {/* Simple text representation using colored boxes - bigger */}
-          <Box args={[0.15, 0.6, 0.1]} position={[-2.2, 1.8, 0.1]}>
-            <meshLambertMaterial color="#8B4513" />
-          </Box>
-          <Box args={[0.15, 0.6, 0.1]} position={[-1.1, 1.8, 0.1]}>
-            <meshLambertMaterial color="#8B4513" />
-          </Box>
-          <Box args={[0.15, 0.6, 0.1]} position={[0, 1.8, 0.1]}>
-            <meshLambertMaterial color="#8B4513" />
-          </Box>
-          <Box args={[0.15, 0.6, 0.1]} position={[1.1, 1.8, 0.1]}>
-            <meshLambertMaterial color="#8B4513" />
-          </Box>
-          <Box args={[0.15, 0.6, 0.1]} position={[2.2, 1.8, 0.1]}>
-            <meshLambertMaterial color="#8B4513" />
-          </Box>
-
-          {/* Line patterns to suggest text - bigger */}
-          <Box args={[4.5, 0.15, 0.1]} position={[0, 1, 0.1]}>
-            <meshLambertMaterial color="#8B4513" />
-          </Box>
-          <Box args={[3.8, 0.15, 0.1]} position={[-0.35, 0.4, 0.1]}>
-            <meshLambertMaterial color="#8B4513" />
-          </Box>
-          <Box args={[4.5, 0.15, 0.1]} position={[0, -0.2, 0.1]}>
-            <meshLambertMaterial color="#8B4513" />
-          </Box>
+          {/* Render different natural objects based on type */}
+          {objectType === 'rock' && (
+            <>
+              {/* Clustered rock formation */}
+              <Box args={[1.8, 1.2, 1.5]} position={[0, 0.6, 0]} rotation={[0, 0.3, 0]}>
+                <meshLambertMaterial color="#8B7355" />
+              </Box>
+              <Box args={[1.2, 0.8, 1.0]} position={[0.8, 0.4, 0.5]} rotation={[0, -0.2, 0]}>
+                <meshLambertMaterial color="#A0522D" />
+              </Box>
+              <Box args={[0.8, 0.6, 0.8]} position={[-0.5, 0.3, -0.3]} rotation={[0, 0.5, 0]}>
+                <meshLambertMaterial color="#696969" />
+              </Box>
+            </>
+          )}
+          
+          {objectType === 'boulder' && (
+            <>
+              {/* Large irregular boulder */}
+              <Box args={[4, 3, 3.5]} position={[0, 1.5, 0]} rotation={[0, 0.4, 0.1]}>
+                <meshLambertMaterial color="#555555" />
+              </Box>
+              <Box args={[2.5, 2, 2]} position={[1, 2.5, 1]} rotation={[0.1, -0.3, 0]}>
+                <meshLambertMaterial color="#696969" />
+              </Box>
+            </>
+          )}
+          
+          {objectType === 'tree' && (
+            <>
+              {/* Realistic tree trunk */}
+              <Box args={[0.8, 5, 0.8]} position={[0, 2.5, 0]} rotation={[0, 0.1, 0.05]}>
+                <meshLambertMaterial color="#654321" />
+              </Box>
+              {/* Layered canopy */}
+              <Box args={[4, 2.5, 4]} position={[0, 6, 0]} rotation={[0, 0.2, 0]}>
+                <meshLambertMaterial color="#228B22" />
+              </Box>
+              <Box args={[3, 2, 3]} position={[0.3, 7.5, -0.2]} rotation={[0, -0.3, 0]}>
+                <meshLambertMaterial color="#32CD32" />
+              </Box>
+              <Box args={[2, 1.5, 2]} position={[-0.2, 8.5, 0.3]} rotation={[0, 0.4, 0]}>
+                <meshLambertMaterial color="#228B22" />
+              </Box>
+            </>
+          )}
+          
+          {objectType === 'deadtree' && (
+            <>
+              {/* Weathered dead tree */}
+              <Box args={[0.6, 6, 0.6]} position={[0, 3, 0]} rotation={[0, 0, 0.1]}>
+                <meshLambertMaterial color="#8B4513" />
+              </Box>
+              {/* Multiple twisted branches */}
+              <Box args={[2.5, 0.3, 0.3]} position={[1.2, 4.5, 0]} rotation={[0, 0, 0.2]}>
+                <meshLambertMaterial color="#A0522D" />
+              </Box>
+              <Box args={[1.8, 0.25, 0.25]} position={[-0.9, 3.8, 0.3]} rotation={[0.1, 0.3, -0.3]}>
+                <meshLambertMaterial color="#8B4513" />
+              </Box>
+              <Box args={[1.2, 0.2, 0.2]} position={[0.8, 5.2, -0.4]} rotation={[-0.1, -0.2, 0.4]}>
+                <meshLambertMaterial color="#A0522D" />
+              </Box>
+            </>
+          )}
+          
+          {objectType === 'cactus' && (
+            <>
+              {/* Saguaro-style cactus */}
+              <Box args={[1.2, 4, 1.2]} position={[0, 2, 0]}>
+                <meshLambertMaterial color="#228B22" />
+              </Box>
+              {/* Multiple arms */}
+              <Box args={[0.8, 2.5, 0.8]} position={[1.5, 3, 0]} rotation={[0, 0, 0.3]}>
+                <meshLambertMaterial color="#228B22" />
+              </Box>
+              <Box args={[0.7, 1.8, 0.7]} position={[-1.2, 2.5, 0.3]} rotation={[0, 0, -0.4]}>
+                <meshLambertMaterial color="#228B22" />
+              </Box>
+              {/* Ribbed texture suggestion */}
+              <Box args={[1.3, 4.2, 0.1]} position={[0, 2, 0.6]}>
+                <meshLambertMaterial color="#32CD32" />
+              </Box>
+            </>
+          )}
+          
+          {objectType === 'shrub' && (
+            <>
+              {/* Desert shrub cluster */}
+              <Box args={[2.5, 1.2, 2]} position={[0, 0.6, 0]} rotation={[0, 0.3, 0]}>
+                <meshLambertMaterial color="#9ACD32" />
+              </Box>
+              <Box args={[1.8, 0.8, 1.5]} position={[0.8, 0.4, -0.5]} rotation={[0, -0.4, 0]}>
+                <meshLambertMaterial color="#8FBC8F" />
+              </Box>
+              <Box args={[1.2, 0.6, 1.2]} position={[-0.6, 0.3, 0.7]} rotation={[0, 0.6, 0]}>
+                <meshLambertMaterial color="#228B22" />
+              </Box>
+            </>
+          )}
+          
+          {objectType === 'mountain' && (
+            <>
+              {/* Distant mountain silhouette */}
+              <Box args={[8, 12, 6]} position={[0, 6, 0]} rotation={[0, 0.2, 0]}>
+                <meshLambertMaterial color="#8B7D6B" />
+              </Box>
+              <Box args={[6, 8, 4]} position={[3, 8, 2]} rotation={[0, -0.3, 0]}>
+                <meshLambertMaterial color="#A0522D" />
+              </Box>
+              <Box args={[5, 6, 3]} position={[-2, 9, -1]} rotation={[0, 0.4, 0]}>
+                <meshLambertMaterial color="#696969" />
+              </Box>
+            </>
+          )}
+          
+          {objectType === 'mesa' && (
+            <>
+              {/* Flat-topped mesa */}
+              <Box args={[6, 8, 4]} position={[0, 4, 0]}>
+                <meshLambertMaterial color="#D2691E" />
+              </Box>
+              <Box args={[6.2, 1, 4.2]} position={[0, 8.5, 0]}>
+                <meshLambertMaterial color="#CD853F" />
+              </Box>
+              {/* Layered rock strata */}
+              <Box args={[6.1, 0.3, 4.1]} position={[0, 6, 0]}>
+                <meshLambertMaterial color="#A0522D" />
+              </Box>
+              <Box args={[6.1, 0.3, 4.1]} position={[0, 4, 0]}>
+                <meshLambertMaterial color="#8B4513" />
+              </Box>
+            </>
+          )}
         </group>
       );
     }
-    return billboards;
+    return objects;
   };
 
   return (
@@ -241,8 +342,8 @@ export default function GameWorld() {
         {/* Desert terrain */}
         {generateDesert()}
 
-        {/* Billboards */}
-        {generateBillboards()}
+        {/* Natural Objects */}
+        {generateNaturalObjects()}
       </group>
 
       {/* Truck - positioned prominently in view */}
