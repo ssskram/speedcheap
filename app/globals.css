@@ -4,17 +4,17 @@
 
 /* Custom CSS variables for the game theme */
 :root {
-  --color-primary: #8B4513;
-  --color-secondary: #CD853F;
-  --color-success: #228B22;
-  --color-warning: #FF8C00;
-  --color-danger: #DC143C;
-  --color-background: #F5E6D3;
-  --color-text: #2F1B14;
-  --color-text-light: #8B7355;
-  --color-border: #D2B48C;
-  
-  --font-family-game: 'Georgia', serif;
+  --color-primary: #8b4513;
+  --color-secondary: #cd853f;
+  --color-success: #228b22;
+  --color-warning: #ff8c00;
+  --color-danger: #dc143c;
+  --color-background: #f5e6d3;
+  --color-text: #2f1b14;
+  --color-text-light: #8b7355;
+  --color-border: #d2b48c;
+
+  --font-family-game: "Georgia", serif;
   --border-radius: 8px;
   --shadow-game: 0 4px 12px rgba(47, 27, 20, 0.15);
 }
@@ -35,4 +35,63 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .mobile-ui {
+    font-size: 14px;
+  }
+
+  .mobile-controls {
+    padding: 8px !important;
+  }
+
+  .mobile-text {
+    font-size: 12px !important;
+  }
+}
+
+/* Custom scrollbar for webkit browsers */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-border);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-primary);
+  border-radius: 4px;
+}
+
+/* Range input styling */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  background: #ddd;
+  border-radius: 3px;
+  outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background: var(--color-primary);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  background: var(--color-primary);
+  border-radius: 50%;
+  cursor: pointer;
+  border: none;
 }

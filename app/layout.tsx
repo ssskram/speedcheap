@@ -19,8 +19,10 @@ type RootLayoutProps = {
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <html lang="en">
-      <body className="antialiased">{children}</body>
+    <html lang="en" className="h-full">
+      <body className="antialiased h-full m-0 p-0 overflow-hidden">
+        {children}
+      </body>
     </html>
   );
 }
