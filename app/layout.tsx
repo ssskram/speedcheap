@@ -2,7 +2,7 @@ import { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Speed is Cheap",
+  title: "Speed is cheap",
   description: "The faster we move, the less it all means",
 };
 

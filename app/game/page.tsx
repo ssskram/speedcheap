@@ -2,6 +2,7 @@
 
 import { Suspense } from "react";
 import dynamic from "next/dynamic";
+import { ErrorBoundary } from "../../components/ErrorBoundary";
 
 const GameScene = dynamic(() => import("../../components/GameScene"), {
   ssr: false,
@@ -21,18 +22,20 @@ const GameUI = dynamic(() => import("../../components/GameUI"), {
 export default function GamePage() {
   return (
     <div className="w-full h-screen overflow-hidden">
-      <Suspense
-        fallback={
-          <div className="w-full h-screen flex items-center justify-center bg-gradient-to-b from-orange-200 to-orange-400">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-amber-900 mx-auto mb-4"></div>
+      <ErrorBoundary>
+        <Suspense
+          fallback={
+            <div className="w-full h-screen flex items-center justify-center bg-gradient-to-b from-orange-200 to-orange-400">
+              <div className="text-center">
+                <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-amber-900 mx-auto mb-4"></div>
+              </div>
             </div>
-          </div>
-        }
-      >
-        <GameScene />
-        <GameUI />
-      </Suspense>
+          }
+        >
+          <GameScene />
+          <GameUI />
+        </Suspense>
+      </ErrorBoundary>
     </div>
   );
 }

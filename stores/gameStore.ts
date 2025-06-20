@@ -81,8 +81,8 @@ export const useGameStore = create<GameState>((set, get) => ({
     if (isReading && readingStartTime > 0) {
       const readingTime = (Date.now() - readingStartTime) / 1000;
       
-      // Always give points for any reading time
-      const speedMultiplier = Math.max(0.5, speed); // Minimum 0.5x, up to 5x
+      // Award more points for slower speeds (reading carefully)
+      const speedMultiplier = Math.max(0.5, 3 - speed * 0.5); // Max 3x at speed 0, min 0.5x at speed 5
       const points = Math.floor(readingTime * 10 * speedMultiplier);
       
       set((state) => ({

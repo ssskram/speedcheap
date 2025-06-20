@@ -47,7 +47,7 @@ export default function GameUI() {
     if (isReading && readingStartTime > 0) {
       interval = setInterval(() => {
         const readingTime = (Date.now() - readingStartTime) / 1000;
-        const speedMultiplier = Math.max(0.5, speed);
+        const speedMultiplier = Math.max(0.5, 3 - speed * 0.5);
         setCurrentReadingPoints(Math.floor(readingTime * 10 * speedMultiplier));
       }, 100);
     } else {
@@ -127,14 +127,17 @@ export default function GameUI() {
               style={{
                 textAlign: "left",
                 marginBottom: "20px",
-                lineHeight: "1.5",
+                lineHeight: "1.7",
               }}
             >
               <p
                 style={{
                   margin: "0 0 12px 0",
                   fontSize: "14px",
-                  color: "#374151",
+                  fontFamily: "Georgia, 'Times New Roman', serif",
+                  color: "#2c2621",
+                  letterSpacing: "0.3px",
+                  fontWeight: "400",
                 }}
               >
                 <strong>🎯 Objective:</strong> Arrive at your destination on
@@ -145,7 +148,10 @@ export default function GameUI() {
                 style={{
                   margin: "0 0 12px 0",
                   fontSize: "14px",
-                  color: "#374151",
+                  fontFamily: "Georgia, 'Times New Roman', serif",
+                  color: "#2c2621",
+                  letterSpacing: "0.3px",
+                  fontWeight: "400",
                 }}
               >
                 <strong>📖 Wisdom:</strong> Click roadside objects to read the
@@ -156,7 +162,10 @@ export default function GameUI() {
                 style={{
                   margin: "0 0 0 0",
                   fontSize: "14px",
-                  color: "#374151",
+                  fontFamily: "Georgia, 'Times New Roman', serif",
+                  color: "#2c2621",
+                  letterSpacing: "0.3px",
+                  fontWeight: "400",
                 }}
               >
                 <strong>⚡ Speed:</strong> Higher speeds cover more distance but
@@ -376,8 +385,10 @@ export default function GameUI() {
               style={{
                 margin: "0 0 10px 0",
                 fontSize: "24px",
+                fontFamily: "Georgia, 'Times New Roman', serif",
                 fontWeight: "bold",
                 color: "#92400e",
+                letterSpacing: "0.3px",
               }}
             >
               {position >= 1500 ? "🏆 Congratulations!" : "⏰ Time's Up!"}
@@ -401,7 +412,14 @@ export default function GameUI() {
                   textAlign: "center",
                 }}
               >
-                <div style={{ fontSize: "14px", color: "#92400e" }}>
+                <div 
+                  style={{ 
+                    fontSize: "14px", 
+                    color: "#92400e",
+                    fontFamily: "Georgia, 'Times New Roman', serif",
+                    letterSpacing: "0.3px",
+                  }}
+                >
                   Final Score
                 </div>
                 <div
@@ -409,6 +427,8 @@ export default function GameUI() {
                     fontSize: "20px",
                     fontWeight: "bold",
                     color: "#92400e",
+                    fontFamily: "Georgia, 'Times New Roman', serif",
+                    letterSpacing: "0.3px",
                   }}
                 >
                   {score}
@@ -423,7 +443,14 @@ export default function GameUI() {
                   textAlign: "center",
                 }}
               >
-                <div style={{ fontSize: "14px", color: "#15803d" }}>
+                <div 
+                  style={{ 
+                    fontSize: "14px", 
+                    color: "#15803d",
+                    fontFamily: "Georgia, 'Times New Roman', serif",
+                    letterSpacing: "0.3px",
+                  }}
+                >
                   Distance
                 </div>
                 <div
@@ -431,6 +458,8 @@ export default function GameUI() {
                     fontSize: "20px",
                     fontWeight: "bold",
                     color: "#15803d",
+                    fontFamily: "Georgia, 'Times New Roman', serif",
+                    letterSpacing: "0.3px",
                   }}
                 >
                   {position.toFixed(0)}/1500 km
@@ -444,7 +473,10 @@ export default function GameUI() {
             style={{ display: "flex", gap: "10px", justifyContent: "center" }}
           >
             <button
-              onClick={() => window.location.reload()}
+              onClick={() => {
+                resetGame();
+                setShowWelcomeModal(true);
+              }}
               style={{
                 backgroundColor: "#3b82f6",
                 color: "white",
@@ -485,22 +517,30 @@ export default function GameUI() {
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            backgroundColor: "white",
-            padding: "10px",
-            borderRadius: "10px",
-            border: "2px solid #000",
-            maxWidth: "400px",
+            backgroundColor: "#fefbf3",
+            padding: "12px 16px",
+            borderRadius: "8px",
+            border: "1px solid #d4c4a0",
+            maxWidth: "480px",
+            minWidth: "320px",
             zIndex: 10004,
             pointerEvents: "auto",
+            boxShadow: "0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08)",
+            backdropFilter: "blur(8px)",
           }}
           onClick={(e) => e.stopPropagation()}
         >
           <p
             style={{
               margin: 0,
-              textAlign: "center",
-              color: "black",
-              lineHeight: "1.5",
+              textAlign: "justify",
+              color: "#2c2621",
+              lineHeight: "1.7",
+              fontSize: "15px",
+              fontFamily: "Georgia, 'Times New Roman', serif",
+              fontWeight: "400",
+              letterSpacing: "0.3px",
+              textIndent: "1.2em",
             }}
           >
             {currentQuote}

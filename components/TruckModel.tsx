@@ -1,22 +1,34 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
 import { useTexture } from "@react-three/drei";
-import { Mesh } from "three";
+import { Mesh, Texture } from "three";
 import { useGameStore } from "../stores/gameStore";
 
 export default function TruckModel() {
   const truckRef = useRef<Mesh>(null);
   const speed = useGameStore((state) => state.speed);
+  const textureRef = useRef<Texture | null>(null);
 
   // Try to load the texture, fallback to placeholder if not found
   let texture;
   try {
     texture = useTexture("/purple_truck_rear.png");
+    textureRef.current = texture;
   } catch (error) {
     texture = null;
   }
+
+  // Cleanup texture on unmount to prevent memory leaks
+  useEffect(() => {
+    return () => {
+      if (textureRef.current) {
+        textureRef.current.dispose();
+        textureRef.current = null;
+      }
+    };
+  }, []);
 
   // Truck shaking based on speed
   useFrame(() => {
@@ -34,7 +46,7 @@ export default function TruckModel() {
     <group>
       {/* Main Truck Sprite */}
       <mesh ref={truckRef} position={[0, 0.1, 1]}>
-        <planeGeometry args={[1.8, 1.1]} />
+        <planeGeometry args={[1.8, 1.6]} />
         {texture ? (
           <meshBasicMaterial map={texture} transparent />
         ) : (

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
 import { Box, Plane } from "@react-three/drei";
 import { Group } from "three";
@@ -48,21 +48,50 @@ const shuffleArray = (array: string[]) => {
 export default function GameWorld() {
   const roadRef = useRef<Group>(null);
   const worldRef = useRef<Group>(null);
-  const { speed, position, isReading, currentBillboardPosition, stopReading } =
+  const { speed, position, isReading, currentBillboardPosition, stopReading, isGameActive } =
     useGameStore();
 
-  // Shuffle quotes once per game and create lookup function
-  const gameQuotes = useRef<string[]>();
-  if (!gameQuotes.current) {
-    gameQuotes.current = shuffleArray(baseQuotes);
+  // Quote management - ensures no repeats during a single game
+  const availableQuotes = useRef<string[]>();
+  const usedQuotes = useRef<string[]>([]);
+
+  // Initialize quotes when game starts or reset when game is not active
+  if (!isGameActive) {
+    // Reset quotes when game is not active (new game or between games)
+    availableQuotes.current = shuffleArray(baseQuotes);
+    usedQuotes.current = [];
+  } else if (!availableQuotes.current) {
+    // Initialize if somehow not set during active game
+    availableQuotes.current = shuffleArray(baseQuotes);
+    usedQuotes.current = [];
   }
 
-  // Function to get quote based on position in the world
-  const getQuoteForPosition = (worldPosition: number): string => {
-    // Calculate which quote this should be based on game progress
-    const quoteIndex = Math.floor((position - worldPosition) / 200);
-    const adjustedIndex = Math.abs(quoteIndex) % gameQuotes.current!.length;
-    return gameQuotes.current![adjustedIndex];
+  // Cleanup on unmount to prevent memory leaks
+  useEffect(() => {
+    return () => {
+      // Clear refs to help with garbage collection
+      availableQuotes.current = undefined;
+      usedQuotes.current = [];
+    };
+  }, []);
+
+  // Function to get next unique quote
+  const getNextQuote = (): string => {
+    if (!availableQuotes.current || availableQuotes.current.length === 0) {
+      // If we've exhausted all quotes, reshuffle and start over
+      // This handles the edge case where someone clicks more objects than we have quotes
+      availableQuotes.current = shuffleArray(baseQuotes.filter(quote => !usedQuotes.current!.includes(quote)));
+      if (availableQuotes.current.length === 0) {
+        // If still no quotes available, reset everything
+        availableQuotes.current = shuffleArray(baseQuotes);
+        usedQuotes.current = [];
+      }
+    }
+
+    // Get the next quote and move it from available to used
+    const nextQuote = availableQuotes.current.shift()!;
+    usedQuotes.current!.push(nextQuote);
+    return nextQuote;
   };
   
   // Function to get random natural object type
@@ -151,7 +180,7 @@ export default function GameWorld() {
     return road;
   };
 
-    // Generate natural objects with position-based quotes
+  // Generate natural objects with unique quotes
   const generateNaturalObjects = () => {
     const objects = [];
     
@@ -159,7 +188,6 @@ export default function GameWorld() {
     for (let i = 0; i < 20; i++) {
       const zPosition = i * -200 - 100; // Much wider spacing for better gameplay
       const side = i % 2 === 0 ? 1 : -1;
-      const quote = getQuoteForPosition(zPosition);
       const objectType = getNaturalObject(i);
       
       // Position objects closer to the road for easier clicking
@@ -175,6 +203,8 @@ export default function GameWorld() {
             const { isReading, isGameActive, isGameComplete, startReading } =
               useGameStore.getState();
             if (!isReading && isGameActive && !isGameComplete) {
+              // Get next unique quote
+              const quote = getNextQuote();
               startReading(quote, zPosition);
             }
           }}

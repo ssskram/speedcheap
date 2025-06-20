@@ -12,6 +12,38 @@ export default function Home() {
 
   return (
     <div className="min-h-screen">
+      {/* GitHub link in top right corner with half-moon design */}
+      <a
+        href="https://github.com/ssskram/speedcheap"
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{
+          position: "fixed",
+          top: "0",
+          right: "0",
+          width: "80px",
+          height: "80px",
+          backgroundColor: "#f59e0b",
+          borderBottomLeftRadius: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          transition: "all 0.3s ease",
+          paddingBottom: "12px",
+          paddingLeft: "12px",
+          zIndex: 1000,
+          boxShadow: "0 2px 6px rgba(245, 158, 11, 0.3)",
+        }}
+        onMouseOver={(e) => {
+          (e.target as HTMLAnchorElement).style.transform = "translateY(-2px)";
+        }}
+        onMouseOut={(e) => {
+          (e.target as HTMLAnchorElement).style.transform = "translateY(0)";
+        }}
+      >
+        <Image src="/github.png" alt="GitHub" width={36} height={36} />
+      </a>
+
       <div
         style={{
           position: "fixed",
@@ -27,28 +59,50 @@ export default function Home() {
             src="/purple_truck_profile.png"
             alt="Purple Truck"
             width={320}
-            height={192}
+            height={300}
             className="object-contain"
             priority
           />
         </div>
 
-        <div className="text-center">
+        <div className="text-center pb-4">
           <div>
-            <p className="text-gray-700">
+            <p 
+              style={{
+                fontFamily: "Georgia, 'Times New Roman', serif",
+                color: "#2c2621",
+                lineHeight: "1.7",
+                letterSpacing: "0.3px",
+                textAlign: "justify",
+                fontWeight: "400",
+                fontSize: "16px",
+                margin: "0 0 16px 0"
+              }}
+            >
               In the liminal space between velocity and contemplation, where
               asphalt becomes prayer and the landscape whispers ancient
               wisdom...
             </p>
 
-            <p className="text-sm text-gray-600">
-              Will you rush past the teachings, or slow enough to receive what
+            <p 
+              style={{
+                fontFamily: "Georgia, 'Times New Roman', serif",
+                color: "#2c2621",
+                lineHeight: "1.7",
+                letterSpacing: "0.3px",
+                textAlign: "justify",
+                fontWeight: "400",
+                fontSize: "16px",
+                margin: "0"
+              }}
+            >
+              Will you rush past the teachings, or move slow enough to receive what
               the landscape offers? The choice reshapes both journey and
               traveler.
             </p>
           </div>
 
-          <div className="pt-4">
+          <div style={{ marginTop: "24px" }}>
             <button
               onClick={handleStartGame}
               style={{
