@@ -1,8 +1,9 @@
 import { Metadata, Viewport } from "next";
+import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Speed is cheap",
-  description: "The faster we move, the less it's all worth",
+  title: "Speed is Cheap",
+  description: "The faster we move, the less it all means",
 };
 
 export const viewport: Viewport = {
@@ -18,16 +19,10 @@ type RootLayoutProps = {
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <html lang="en" className="light">
-      <head>
-        <link
-          rel="icon"
-          href="/favicon.ico"
-          sizes="16x16"
-          type="image/x-icon"
-        />
-      </head>
-      <body>{children}</body>
+    <html lang="en" className="h-full">
+      <body className="antialiased h-full m-0 p-0 overflow-hidden">
+        {children}
+      </body>
     </html>
   );
 }
